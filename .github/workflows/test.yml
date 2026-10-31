@@ -1,0 +1,37 @@
+# The proof, in three parts: the corpus is current, the C machine builds and runs,
+# and both machines agree with the hand-computed answers.
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "20"
+
+      - name: The generated corpus header is current
+        run: |
+          node tools/gen-corpus.mjs
+          git diff --exit-code c/corpus.h || {
+            echo "::error::c/corpus.h is stale — run node tools/gen-corpus.mjs and commit it"; exit 1; }
+
+      - name: Build the C machine
+        run: gcc -O2 -Wall -Wextra -o weft8-corpus c/weft8.c c/main.c
+
+      - name: Three-way parity — hand-computed, C, JavaScript
+        run: node tools/parity.mjs ./weft8-corpus
+
+      - name: The corpus, the C source and the page
+        run: node test-node.js

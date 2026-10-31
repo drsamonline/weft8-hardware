@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weft-8 on hardware — the parity bench</title>
+<meta name="description" content="The Loom's 8-bit machine, ported to C and run beside the JavaScript one. Ten programs, hand-computed results, three-way parity.">
+<meta name="theme-color" content="#0b1f14">
+<style>
+  :root{--board:#0b1f14;--copper:#c98b4b;--ink:#dff3e4;--dim:#8fb9a0;--green:#6ee7a0;--amber:#ffc46b;
+        --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;color:var(--ink);font:14.5px/1.7 var(--mono);
+    background:radial-gradient(900px 500px at 75% -10%,#14361f 0%,transparent 60%),
+      repeating-linear-gradient(0deg,rgba(31,74,48,.3) 0 1px,transparent 1px 28px),
+      repeating-linear-gradient(90deg,rgba(31,74,48,.3) 0 1px,transparent 1px 28px),var(--board)}
+  a{color:var(--green)}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 20px 48px}
+  .top{display:flex;align-items:center;gap:12px;padding:18px 0;border-bottom:1px solid rgba(110,231,160,.18)}
+  .chip{width:24px;height:24px;border:1px solid var(--copper);border-radius:3px;position:relative}
+  .chip:before{content:"";position:absolute;inset:4px;border:1px solid rgba(201,139,75,.5)}
+  .brand{font:600 12.5px/1 var(--mono);letter-spacing:.24em;text-transform:uppercase}
+  .top .r{margin-left:auto;font-size:12px;color:var(--dim);display:flex;gap:12px}
+  .top .r a{text-decoration:none}
+  .hero{padding:52px 0 34px;display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center}
+  @media (max-width:880px){.hero{grid-template-columns:1fr;padding:30px 0 20px}}
+  .kick{font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--copper);margin:0 0 12px}
+  h1{font:600 clamp(32px,5.6vw,52px)/1.06 var(--mono);margin:0 0 16px;letter-spacing:-.02em}
+  h1 em{font-style:normal;color:var(--green)}
+  .lede{color:var(--dim);max-width:56ch;margin:0 0 22px}
+  .lede b{color:var(--ink)}
+  .cta{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{display:inline-block;padding:12px 18px;border-radius:7px;text-decoration:none;font-weight:600;
+    background:var(--green);color:#04220f;border:1px solid var(--green)}
+  .btn.gh{background:transparent;color:var(--ink);border:1px solid rgba(110,231,160,.3)}
+  .btn.gh:hover{border-color:var(--green);color:var(--green)}
+  .board{border:1px solid rgba(110,231,160,.22);border-radius:10px;padding:16px;background:rgba(8,26,16,.75);position:relative}
+  .board:before{content:"U1 · WEFT-8";position:absolute;top:8px;right:12px;font-size:9.5px;letter-spacing:.18em;color:var(--copper)}
+  .board pre{margin:0;font:12px/1.75 var(--mono);color:#cfe9d8;white-space:pre-wrap}
+  .board pre .c{color:#5f8a6f}
+  .board pre .k{color:var(--green)}
+  .board pre .n{color:var(--amber)}
+  .pin{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+  .pin span{font-size:10px;letter-spacing:.1em;color:var(--dim);border:1px solid rgba(110,231,160,.2);
+    border-radius:3px;padding:2px 6px}
+  section{padding:34px 0;border-top:1px solid rgba(110,231,160,.16)}
+  h2{font:600 clamp(20px,3vw,26px)/1.2 var(--mono);margin:0 0 8px;letter-spacing:-.01em}
+  .sub{color:var(--dim);margin:0 0 22px;max-width:70ch}
+  .three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media (max-width:880px){.three{grid-template-columns:1fr}}
+  .tile{border:1px solid rgba(110,231,160,.2);border-radius:8px;padding:14px;background:rgba(8,26,16,.6)}
+  .tile h3{margin:0 0 6px;font:600 12.5px/1.3 var(--mono);color:var(--green)}
+  .tile p{margin:0;color:var(--dim);font-size:12.5px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{text-align:left;padding:8px 10px;color:var(--dim);font:600 10px/1 var(--mono);letter-spacing:.16em;
+    text-transform:uppercase;border-bottom:1px solid rgba(110,231,160,.2)}
+  td{padding:8px 10px;border-bottom:1px solid rgba(31,74,48,.5);color:#cfe9d8}
+  footer{padding:20px 0 40px;color:var(--dim);font-size:11.5px;display:flex;gap:10px;flex-wrap:wrap;
+    border-top:1px solid rgba(110,231,160,.16);margin-top:8px}
+  code{background:rgba(110,231,160,.1);border:1px solid rgba(110,231,160,.22);border-radius:4px;padding:1px 4px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <span class="chip" aria-hidden="true"></span>
+    <span class="brand">Weft-8 · hardware</span>
+    <div class="r"><a href="play/">the bench</a><span>·</span><a href="https://github.com/drsamonline/weft8-hardware">source</a></div>
+  </div>
+
+  <div class="hero">
+    <div>
+      <p class="kick">one machine · two implementations · one answer</p>
+      <h1>The same 8-bit computer,<br><em>not</em> just in a browser.</h1>
+      <p class="lede">The Loom's Weft-8 is about 180 lines of C here as well as a single JavaScript file —
+      sixteen registers, four flags, 256 bytes, twenty-seven instructions. <b>Ten programs, with results
+      worked out by hand</b>, must agree across all three: the hand computation, the C machine, and the
+      JavaScript one. If any of them drifts, the build goes red.</p>
+      <div class="cta">
+        <a class="btn" href="play/">Open the parity bench</a>
+        <a class="btn gh" href="https://github.com/drsamonline/weft8-hardware">Read the C</a>
+      </div>
+    </div>
+    <div class="board">
+      <pre><span class="c">/* the whole machine, in one switch */</span>
+<span class="k">case</span> W8_ADD:
+    va = m-&gt;r[a]; vb = m-&gt;r[b];
+    res = (<span class="k">unsigned</span>)va + vb;
+    m-&gt;r[a] = (<span class="k">uint8_t</span>)res;
+    m-&gt;c = res &gt; <span class="n">0xFF</span>;
+    m-&gt;v = (((va ^ res) &amp;
+             (vb ^ res)) &amp; <span class="n">0x80</span>) != <span class="n">0</span>;
+    set_nz(m, m-&gt;r[a]);
+    <span class="k">break</span>;</pre>
+      <div class="pin">
+        <span>16 registers</span><span>Z C N V</span><span>256 bytes</span><span>27 opcodes</span><span>2 bytes each</span>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <h2>Why a C port is the honest test</h2>
+    <p class="sub">A machine described in one language can hide a mistake inside that language's habits. A second
+    implementation, written from the same specification and checked against an independent answer, cannot.</p>
+    <div class="three">
+      <div class="tile"><h3>1 · the answer</h3><p>Ten programs with results computed by hand from the ISA —
+        registers, flags and what reached the ports.</p></div>
+      <div class="tile"><h3>2 · the C machine</h3><p><code>c/weft8.c</code> and <code>c/weft8.h</code>. Built with
+        <code>gcc -O2</code>, run over the corpus in CI.</p></div>
+      <div class="tile"><h3>3 · the JavaScript machine</h3><p>The Loom's own <code>weft8.js</code>, byte for byte
+        — the engine every other Weft app runs.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The corpus</h2>
+    <p class="sub">Every row is a claim about the machine, and each one is checked three ways.</p>
+    <table>
+      <thead><tr><th>program</th><th>what it proves</th></tr></thead>
+      <tbody>
+        <tr><td>add</td><td>5 + 7 lands in a register, no flags raised</td></tr>
+        <tr><td>borrow</td><td>2 − 5 wraps to 0xFD and sets carry and negative</td></tr>
+        <tr><td>overflow</td><td>127 + 1 sets overflow, which is what makes signed branches correct</td></tr>
+        <tr><td>countdown</td><td>a loop runs exactly five times</td></tr>
+        <tr><td>signed</td><td>−1 is less than 1, though 255 is greater</td></tr>
+        <tr><td>stack</td><td>PUSH/POP return values in reverse order</td></tr>
+        <tr><td>callret</td><td>CALL and RET come back to the right place</td></tr>
+        <tr><td>ram</td><td>STORE then LOAD round-trips through scratch RAM</td></tr>
+        <tr><td>shift</td><td>SHL moves the top bit into carry</td></tr>
+        <tr><td>ports</td><td>two bytes written to a port arrive in order</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    <span>Built on the Loom — <a href="https://github.com/drsamonline/app-jacquard">app-jacquard</a>: the same
+      engine, byte for byte, plus a C port that must agree with it</span>
+    <span>·</span><span>© 2026 Dr Sohil Momin</span><span>·</span><span>PolyForm Noncommercial 1.0.0</span>
+  </footer>
+</div>
+</body>
+</html>
