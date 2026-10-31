@@ -21,11 +21,12 @@ jobs:
         with:
           node-version: "20"
 
-      - name: The generated corpus header is current
+      - name: The generated corpus is current (header AND demo)
         run: |
           node tools/gen-corpus.mjs
-          git diff --exit-code c/corpus.h || {
-            echo "::error::c/corpus.h is stale — run node tools/gen-corpus.mjs and commit it"; exit 1; }
+          node tools/sync-demo.mjs
+          git diff --exit-code c/corpus.h docs/play/corpus.js || {
+            echo "::error::a generated file is stale — run node tools/gen-corpus.mjs && node tools/sync-demo.mjs and commit them"; exit 1; }
 
       - name: Build the C machine
         run: gcc -O2 -Wall -Wextra -o weft8-corpus c/weft8.c c/main.c

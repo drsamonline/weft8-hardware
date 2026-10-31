@@ -1,44 +1,216 @@
 {
   "note": "Ten programs and their results, computed by hand from the ISA. Both implementations must match them: the C machine (c/) and the Loom's JavaScript machine (docs/play/weft8.js).",
   "programs": [
-    { "id": "add", "what": "5 + 7 in two registers",
+    {
+      "id": "add",
+      "what": "5 + 7 in two registers",
       "source": "LDI 5\nMOV R1, R0\nLDI 7\nMOV R2, R0\nADD R1, R2\nHLT",
-      "expect": { "r": { "0": 7, "1": 12, "2": 7 }, "flags": { "z": 0, "c": 0, "n": 0, "v": 0 }, "halted": 1, "out": [] } },
-
-    { "id": "borrow", "what": "2 - 5 wraps and borrows",
+      "expect": {
+        "r": {
+          "0": 7,
+          "1": 12,
+          "2": 7
+        },
+        "flags": {
+          "z": 0,
+          "c": 0,
+          "n": 0,
+          "v": 0
+        },
+        "halted": 1,
+        "out": []
+      }
+    },
+    {
+      "id": "borrow",
+      "what": "2 - 5 wraps and borrows",
       "source": "LDI 2\nMOV R1, R0\nLDI 5\nMOV R2, R0\nSUB R1, R2\nHLT",
-      "expect": { "r": { "1": 253 }, "flags": { "z": 0, "c": 1, "n": 1, "v": 0 }, "halted": 1, "out": [] } },
-
-    { "id": "overflow", "what": "127 + 1 overflows a signed byte",
+      "expect": {
+        "r": {
+          "1": 253
+        },
+        "flags": {
+          "z": 0,
+          "c": 1,
+          "n": 1,
+          "v": 0
+        },
+        "halted": 1,
+        "out": []
+      }
+    },
+    {
+      "id": "overflow",
+      "what": "127 + 1 overflows a signed byte",
       "source": "LDI 0x7F\nMOV R1, R0\nLDI 1\nMOV R2, R0\nADD R1, R2\nHLT",
-      "expect": { "r": { "1": 128 }, "flags": { "z": 0, "c": 0, "n": 1, "v": 1 }, "halted": 1, "out": [] } },
-
-    { "id": "countdown", "what": "a counted loop runs exactly five times",
+      "expect": {
+        "r": {
+          "1": 128
+        },
+        "flags": {
+          "z": 0,
+          "c": 0,
+          "n": 1,
+          "v": 1
+        },
+        "halted": 1,
+        "out": []
+      }
+    },
+    {
+      "id": "countdown",
+      "what": "a counted loop runs exactly five times",
       "source": "LDI 5\nMOV R1, R0\nLDI 0\nMOV R2, R0\nloop: LDI 1\nADD R2, R0\nLDI 1\nMOV R5, R0\nSUB R1, R5\nJNZ loop\nHLT",
-      "expect": { "r": { "0": 1, "1": 0, "2": 5, "5": 1 }, "flags": { "z": 1, "c": 0, "n": 0, "v": 0 }, "halted": 1, "out": [] } },
-
-    { "id": "signed", "what": "-1 is less than 1, though 255 is greater",
+      "expect": {
+        "r": {
+          "0": 1,
+          "1": 0,
+          "2": 5,
+          "5": 1
+        },
+        "flags": {
+          "z": 1,
+          "c": 0,
+          "n": 0,
+          "v": 0
+        },
+        "halted": 1,
+        "out": []
+      }
+    },
+    {
+      "id": "signed",
+      "what": "-1 is less than 1, though 255 is greater",
       "source": "LDI 0xFF\nMOV R1, R0\nLDI 1\nMOV R2, R0\nCMP R1, R2\nJL less\nLDI 0\nMOV R3, R0\nHLT\nless: LDI 1\nMOV R3, R0\nHLT",
-      "expect": { "r": { "0": 1, "1": 255, "2": 1, "3": 1 }, "flags": { "z": 0, "c": 0, "n": 0, "v": 0 }, "halted": 1, "out": [] } },
-
-    { "id": "stack", "what": "PUSH twice, POP twice, in reverse",
+      "expect": {
+        "r": {
+          "0": 1,
+          "1": 255,
+          "2": 1,
+          "3": 1
+        },
+        "flags": {
+          "z": 0,
+          "c": 0,
+          "n": 0,
+          "v": 0
+        },
+        "halted": 1,
+        "out": []
+      }
+    },
+    {
+      "id": "stack",
+      "what": "PUSH twice, POP twice, in reverse",
       "source": "LDI 5\nMOV R1, R0\nLDI 6\nMOV R2, R0\nPUSH R1\nPUSH R2\nPOP R3\nPOP R4\nHLT",
-      "expect": { "r": { "3": 6, "4": 5 }, "flags": { "z": 0, "c": 0, "n": 0, "v": 0 }, "halted": 1, "out": [] } },
-
-    { "id": "callret", "what": "CALL and RET come back to the right place",
+      "expect": {
+        "r": {
+          "3": 6,
+          "4": 5
+        },
+        "flags": {
+          "z": 0,
+          "c": 0,
+          "n": 0,
+          "v": 0
+        },
+        "halted": 1,
+        "out": []
+      }
+    },
+    {
+      "id": "callret",
+      "what": "CALL and RET come back to the right place",
       "source": "LDI 1\nCALL sub\nLDI 9\nMOV R3, R0\nHLT\nsub: LDI 2\nMOV R4, R0\nRET",
-      "expect": { "r": { "3": 9, "4": 2 }, "flags": { "z": 0, "c": 0, "n": 0, "v": 0 }, "halted": 1, "out": [] } },
-
-    { "id": "ram", "what": "STORE then LOAD round-trips through scratch RAM",
+      "expect": {
+        "r": {
+          "3": 9,
+          "4": 2
+        },
+        "flags": {
+          "z": 0,
+          "c": 0,
+          "n": 0,
+          "v": 0
+        },
+        "halted": 1,
+        "out": []
+      }
+    },
+    {
+      "id": "ram",
+      "what": "STORE then LOAD round-trips through scratch RAM",
       "source": "LDI 42\nSTORE 0x80\nLDI 0\nLOAD 0x80\nHLT",
-      "expect": { "r": { "0": 42 }, "flags": { "z": 0, "c": 0, "n": 0, "v": 0 }, "halted": 1, "out": [] } },
-
-    { "id": "shift", "what": "SHL moves the top bit into carry and sets overflow",
+      "expect": {
+        "r": {
+          "0": 42
+        },
+        "flags": {
+          "z": 0,
+          "c": 0,
+          "n": 0,
+          "v": 0
+        },
+        "halted": 1,
+        "out": []
+      }
+    },
+    {
+      "id": "shift",
+      "what": "SHL moves the top bit into carry and sets overflow",
       "source": "LDI 0x81\nMOV R1, R0\nSHL R1\nHLT",
-      "expect": { "r": { "1": 2 }, "flags": { "z": 0, "c": 1, "n": 0, "v": 1 }, "halted": 1, "out": [] } },
-
-    { "id": "ports", "what": "two bytes written to a port arrive in order",
+      "expect": {
+        "r": {
+          "1": 2
+        },
+        "flags": {
+          "z": 0,
+          "c": 1,
+          "n": 0,
+          "v": 1
+        },
+        "halted": 1,
+        "out": []
+      }
+    },
+    {
+      "id": "ports",
+      "what": "two bytes written to a port arrive in order",
       "source": "LDI 65\nOUT 0xC5\nLDI 66\nOUT 0xC5\nHLT",
-      "expect": { "r": {}, "flags": { "z": 0, "c": 0, "n": 0, "v": 0 }, "halted": 1, "out": [65, 66] } }
+      "expect": {
+        "r": {},
+        "flags": {
+          "z": 0,
+          "c": 0,
+          "n": 0,
+          "v": 0
+        },
+        "halted": 1,
+        "out": [
+          65,
+          66
+        ]
+      }
+    },
+    {
+      "id": "signed-cmp",
+      "what": "-2 is less than -1, though 254 is greater than 255's neighbour",
+      "source": "LDI 0xFE\nMOV R1, R0\nLDI 0xFF\nMOV R2, R0\nCMP R1, R2\nJL  less\nLDI 0\nMOV R3, R0\nHLT\nless: LDI 1\nMOV R3, R0\nHLT",
+      "expect": {
+        "r": {
+          "1": 254,
+          "2": 255,
+          "3": 1
+        },
+        "flags": {
+          "z": 0,
+          "c": 1,
+          "n": 0,
+          "v": 0
+        },
+        "halted": 1,
+        "out": []
+      }
+    }
   ]
 }

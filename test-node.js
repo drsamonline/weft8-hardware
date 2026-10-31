@@ -22,10 +22,10 @@ const eq = (g, w, n) => ok(JSON.stringify(g) === JSON.stringify(w),
   n + "  (got " + JSON.stringify(g) + ", want " + JSON.stringify(w) + ")");
 
 console.log("the corpus — hand-computed, not recorded");
-eq(CORPUS.programs.length, 10, "ten programs are in the corpus");
+eq(CORPUS.programs.length, 11, "eleven programs are in the corpus");
 ok(CORPUS.programs.every(p => p.expect && p.expect.flags && p.expect.r), "every program carries an expectation");
 ok(CORPUS.programs.every(p => typeof p.what === "string" && p.what.length > 10), "every program says what it proves");
-eq(new Set(CORPUS.programs.map(p => p.id)).size, 10, "the ids are unique");
+eq(new Set(CORPUS.programs.map(p => p.id)).size, 11, "the ids are unique");
 
 console.log("the Loom's machine — it reproduces every hand-computed result");
 Parity.runAll().forEach(function (r) {
@@ -62,6 +62,21 @@ const html = fs.readFileSync("./docs/play/index.html", "utf8");
   ok(html.indexOf('<script src="' + k + '"></script>') > 0, "the page loads " + k);
 });
 ok(html.indexOf('id="rows"') > 0, "the page has the corpus table");
+
+
+/* the family — every page links back to the Loom, and the Loom to every page */
+{
+  const fsm = require("fs");
+  const landing = fsm.readFileSync("./docs/index.html", "utf8");
+  ok(landing.indexOf('id="family"') > 0, "the landing page carries the family strip");
+  ok(landing.indexOf("you are here") > 0, "and marks this page as the one you are on");
+  ['app-jacquard', 'app-weft-puzzles', 'app-clip-loom', 'weft8-kit', 'weft8-classroom', 'weft8-compare'].forEach(function (slug) {
+    ok(landing.indexOf("https://drsamonline.github.io/" + slug + "/") > 0, "it links to " + slug);
+  });
+  const readme = fsm.readFileSync("./README.md", "utf8");
+  ok(readme.indexOf("The Weft-8 family") > 0, "the README carries the family table too");
+  ok(readme.indexOf("you are here") > 0, "and marks this repository in it");
+}
 
 console.log("");
 console.log(pass + " passed, " + failures.length + " failed");

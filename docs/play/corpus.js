@@ -1,5 +1,5 @@
 /* GENERATED from corpus.json by tools/sync-demo.mjs — do not edit. */
-(function(root){
+(function (root) {
   var DATA = {
  "note": "Ten programs and their results, computed by hand from the ISA. Both implementations must match them: the C machine (c/) and the Loom's JavaScript machine (docs/play/weft8.js).",
  "programs": [
@@ -192,6 +192,26 @@
      65,
      66
     ]
+   }
+  },
+  {
+   "id": "signed-cmp",
+   "what": "-2 is less than -1, though 254 is greater than 255's neighbour",
+   "source": "LDI 0xFE\nMOV R1, R0\nLDI 0xFF\nMOV R2, R0\nCMP R1, R2\nJL  less\nLDI 0\nMOV R3, R0\nHLT\nless: LDI 1\nMOV R3, R0\nHLT",
+   "expect": {
+    "r": {
+     "1": 254,
+     "2": 255,
+     "3": 1
+    },
+    "flags": {
+     "z": 0,
+     "c": 1,
+     "n": 0,
+     "v": 0
+    },
+    "halted": 1,
+    "out": []
    }
   }
  ]

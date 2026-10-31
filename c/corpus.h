@@ -13,6 +13,7 @@ static const uint8_t prog_6[] = {0,1,18,10,0,9,1,48,26,0,0,2,1,64,19,0};
 static const uint8_t prog_7[] = {0,42,3,128,0,0,2,128,26,0};
 static const uint8_t prog_8[] = {0,129,1,16,10,16,26,0};
 static const uint8_t prog_9[] = {0,65,23,197,0,66,23,197,26,0};
+static const uint8_t prog_10[] = {0,254,1,16,0,255,1,32,12,18,17,18,0,0,1,48,26,0,0,1,1,48,26,0};
 
 typedef struct { const char *id; const uint8_t *rom; int len; } corpus_entry;
 static const corpus_entry CORPUS[] = {
@@ -26,7 +27,8 @@ static const corpus_entry CORPUS[] = {
   {"ram", prog_7, sizeof(prog_7)},
   {"shift", prog_8, sizeof(prog_8)},
   {"ports", prog_9, sizeof(prog_9)},
+  {"signed-cmp", prog_10, sizeof(prog_10)},
 };
-#define CORPUS_N 10
+#define CORPUS_N 11
 
 #endif
