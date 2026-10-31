@@ -32,9 +32,16 @@ try {
 
 const byId = (rows, id) => rows.find((r) => r.id === id);
 
+function flagOf(flags, f) {
+  /* the JavaScript machine uses Z C N V; the C machine uses z c n v */
+  if (Object.prototype.hasOwnProperty.call(flags, f)) return !!flags[f];
+  if (Object.prototype.hasOwnProperty.call(flags, f.toUpperCase())) return !!flags[f.toUpperCase()];
+  return false;
+}
+
 function matches(expect, r, flags, out) {
   const regsOk = Object.keys(expect.r).every((k) => r[+k] === expect.r[k]);
-  const flagsOk = ["z", "c", "n", "v"].every((f) => !!flags[f] === !!expect.flags[f]);
+  const flagsOk = ["z", "c", "n", "v"].every((f) => flagOf(flags, f) === !!expect.flags[f]);
   const outOk = JSON.stringify(out) === JSON.stringify(expect.out);
   return { ok: regsOk && flagsOk && outOk, regsOk, flagsOk, outOk };
 }

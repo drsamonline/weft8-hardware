@@ -2,19 +2,13 @@
 
 # Weft-8 on hardware
 
-<!-- shot:start -->
-
-![Screenshot](docs/shot.png)
-
-<!-- shot:end -->
-
 **The Loom's 8-bit machine, in C — and a bench that proves it is the same machine.**
 
-[![Live bench](https://img.shields.io/badge/live-the%20parity%20bench-6ee7a0
-[![Test](https://img.shields.io/github/actions/workflow/status/drsamonline/weft8-hardware/test.yml
-[![Build + deploy](https://img.shields.io/github/actions/workflow/status/drsamonline/weft8-hardware/build-apps.yml
-[![Licence](https://img.shields.io/badge/licence-PolyForm%20Noncommercial%201.0.0-c98b4b
-[![Built on the Loom](https://img.shields.io/badge/built%20on-the%20Loom%20(app--jacquard)-c98b4b
+[![Live bench](https://img.shields.io/badge/live-the%20parity%20bench-6ee7a0?style=flat-square&labelColor=0b1f14)](https://drsamonline.github.io/weft8-hardware/)
+[![Test](https://img.shields.io/github/actions/workflow/status/drsamonline/weft8-hardware/test.yml?branch=main&style=flat-square&label=tests&labelColor=0b1f14)](https://github.com/drsamonline/weft8-hardware/actions/workflows/test.yml)
+[![Build + deploy](https://img.shields.io/github/actions/workflow/status/drsamonline/weft8-hardware/build-apps.yml?branch=main&style=flat-square&label=build&labelColor=0b1f14)](https://github.com/drsamonline/weft8-hardware/actions/workflows/build-apps.yml)
+[![Licence](https://img.shields.io/badge/licence-PolyForm%20Noncommercial%201.0.0-c98b4b?style=flat-square&labelColor=0b1f14)](LICENSE)
+[![Built on the Loom](https://img.shields.io/badge/built%20on-the%20Loom%20(app--jacquard)-c98b4b?style=flat-square&labelColor=0b1f14)](https://github.com/drsamonline/app-jacquard)
 
 [**Open the parity bench →**](https://drsamonline.github.io/weft8-hardware/)
 
