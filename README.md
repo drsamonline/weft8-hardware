@@ -2,12 +2,6 @@
 
 # Weft-8 on hardware
 
-<!-- shot:start -->
-
-![Screenshot](docs/shot.png)
-
-<!-- shot:end -->
-
 **The Loom's 8-bit machine, in C — and a bench that proves it is the same machine.**
 
 [![Live bench](https://img.shields.io/badge/live-the%20parity%20bench-6ee7a0?style=flat-square&labelColor=0b1f14)](https://drsamonline.github.io/weft8-hardware/)
