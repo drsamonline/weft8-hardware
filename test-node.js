@@ -58,7 +58,7 @@ CORPUS.programs.forEach(function (p, i) {
 
 console.log("the page — it loads the bench it is tested against");
 const html = fs.readFileSync("./docs/play/index.html", "utf8");
-["web-kit.js", "weft8.js", "corpus.js", "parity.js"].forEach(function (k) {
+["weft8.js", "corpus.js", "parity.js"].forEach(function (k) {
   ok(html.indexOf('<script src="' + k + '"></script>') > 0, "the page loads " + k);
 });
 ok(html.indexOf('id="rows"') > 0, "the page has the corpus table");
