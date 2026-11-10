@@ -21,11 +21,11 @@
       "at": "2026-11-04T20:09:53Z"
     },
     ".github/workflows/build-apps.yml": {
-      "sha": "2d4b10228b19da45287eb8987f20f2611c6c3201",
+      "sha": "30e3158be8a4dd01981c71ec01ffb4f3965f704f",
       "producer": "audit-2026-11-10",
       "class": "canonical",
-      "at": "2026-11-10T14:51:40Z"
+      "at": "2026-11-10T15:08:34Z"
     }
   },
-  "updated": "2026-11-10T14:51:40Z"
+  "updated": "2026-11-10T15:08:34Z"
 }
